@@ -1,6 +1,11 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+
 import copy
 import unittest
-import database as db
+import gestor.database as db
+import gestor.helpers as helpers
 
 class TestDatabase(unittest.TestCase):
 
@@ -27,8 +32,7 @@ class TestDatabase(unittest.TestCase):
 
     def test_modificar_cliente(self):
         cliente_a_modificar = copy.copy(db.Clientes.buscar('28Z'))
-        cliente_modificado = db.Clientes.modificar('28Z', 'Mariana',
-'Pérez')
+        cliente_modificado = db.Clientes.modificar('28Z', 'Mariana','Pérez')
         self.assertEqual(cliente_a_modificar.nombre, 'Ana')
         self.assertEqual(cliente_modificado.nombre, 'Mariana')
 
@@ -36,6 +40,12 @@ class TestDatabase(unittest.TestCase):
         cliente_borrado = db.Clientes.borrar('48H')
         cliente_rebuscado = db.Clientes.buscar('48H')
         self.assertNotEqual(cliente_borrado, cliente_rebuscado)
+    
+    def test_dni_valido(self):
+        self.assertTrue(helpers.dni_valido('00A', db.Clientes.lista))
+        self.assertFalse(helpers.dni_valido('23223S', db.Clientes.lista))
+        self.assertFalse(helpers.dni_valido('F35', db.Clientes.lista))
+        self.assertFalse(helpers.dni_valido('48H', db.Clientes.lista))
 
 if __name__ == '__main__':
     unittest.main()
